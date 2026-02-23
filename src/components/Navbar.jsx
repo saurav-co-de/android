@@ -3,7 +3,7 @@ import { Sun, Moon, Menu, X } from 'lucide-react';
 
 const Navbar = ({ darkMode, setDarkMode, toggleSidebar, sidebarOpen }) => {
     return (
-        <header className="sticky top-0 z-30 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+        <header className="sticky top-0 z-30 w-full bg-white/60 dark:bg-gray-900/60 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-700/50">
             <div className="px-4 lg:px-8 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <button

@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import ProgramContent from './components/ProgramContent';
 import { Toaster } from 'react-hot-toast';
+import sukonaVideo from './assets/sukona.mp4';
 
 function App() {
   const [activeId, setActiveId] = useState(1);
@@ -37,7 +38,21 @@ function App() {
   const activeProgram = programs.find(p => p.id === activeId);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50/10 dark:bg-gray-900/10 text-gray-900 dark:text-gray-100 transition-colors duration-300 relative overflow-hidden">
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed top-0 left-0 w-full h-full object-cover -z-10 opacity-40 dark:opacity-20 transition-opacity duration-500"
+      >
+        <source src={sukonaVideo} type="video/mp4" />
+      </video>
+
+      {/* Content Overlay */}
+      <div className="fixed inset-0 bg-white/20 dark:bg-gray-900/40 backdrop-blur-[2px] -z-10"></div>
+
       <Toaster position="bottom-right" />
 
       {/* Sidebar Overlay for Mobile */}
@@ -58,7 +73,7 @@ function App() {
         setIsOpen={setSidebarOpen}
       />
 
-      <div className="lg:pl-72 flex flex-col min-h-screen">
+      <div className="lg:pl-72 flex flex-col min-h-screen relative z-10">
         <Navbar
           darkMode={darkMode}
           setDarkMode={setDarkMode}
