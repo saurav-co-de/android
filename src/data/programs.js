@@ -323,6 +323,407 @@ public class MainActivity extends AppCompatActivity {
             rootLayout.setBackgroundColor(Color.GREEN);
             statusText.setText("Portrait Mode");
         }
+}`
+    },
+    {
+        id: 6,
+        title: "DatePicker & TimePicker",
+        description: "Implement DatePicker and TimePicker dialogs to set birth details.",
+        xml: `<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/dateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date of Birth: Not Set"
+        android:textSize="18sp"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/dateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick a Date of Birth" />
+
+    <TextView
+        android:id="@+id/timeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time of Birth: Not Set"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginTop="30dp" />
+
+    <Button
+        android:id="@+id/timeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Time of Birth" />
+
+</LinearLayout>`,
+        java: `package com.example.lab06;
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView dateLabel, timeLabel;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        dateLabel = findViewById(R.id.dateLabel);
+        timeLabel = findViewById(R.id.timeLabel);
+        Button dateBtn = findViewById(R.id.dateBtn);
+        Button timeBtn = findViewById(R.id.timeBtn);
+
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+
+        dateBtn.setOnClickListener(v -> {
+            DatePickerDialog dialog = new DatePickerDialog(
+                    MainActivity.this,
+                    (DatePicker view, int y, int m, int d) ->
+                            dateLabel.setText("Date of Birth: " + d + "/" + (m + 1) + "/" + y),
+                    year, month, day);
+            dialog.show();
+        });
+
+        timeBtn.setOnClickListener(v -> {
+            TimePickerDialog dialog = new TimePickerDialog(
+                    MainActivity.this,
+                    (TimePicker view, int h, int min) ->
+                            timeLabel.setText("Time of Birth: " + h + ":" + String.format("%02d", min)),
+                    hour, minute, true);
+            dialog.show();
+        });
+    }
+}`
+    },
+    {
+        id: 7,
+        title: "Audio Player (MP3 from raw folder)",
+        description: "Create an audio player to play, pause and stop music from a list.",
+        xml: `<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/currentSong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected Song: song1"
+        android:textSize="18sp" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/playBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play" />
+
+        <Button
+            android:id="@+id/pauseBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause" />
+
+        <Button
+            android:id="@+id/stopBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop" />
+    </LinearLayout>
+
+</LinearLayout>`,
+        java: `package com.example.lab07;
+
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    MediaPlayer mp;
+    TextView currentSong;
+    ListView listView;
+
+    String[] songs = {"song1", "song2"};
+    int[] songIds = {R.raw.song1, R.raw.song2};
+    int selected = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        currentSong = findViewById(R.id.currentSong);
+        listView = findViewById(R.id.listView);
+
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_list_item_1, songs);
+
+        listView.setAdapter(adapter);
+
+        mp = MediaPlayer.create(this, songIds[0]);
+
+        listView.setOnItemClickListener((a, v, pos, id) -> {
+            selected = pos;
+            currentSong.setText("Selected Song: " + songs[pos]);
+            mp.stop();
+            mp = MediaPlayer.create(this, songIds[pos]);
+        });
+
+        findViewById(R.id.playBtn).setOnClickListener(v -> mp.start());
+        findViewById(R.id.pauseBtn).setOnClickListener(v -> mp.pause());
+        findViewById(R.id.stopBtn).setOnClickListener(v -> {
+            mp.stop();
+            mp = MediaPlayer.create(this, songIds[selected]);
+        });
+    }
+}`
+    },
+    {
+        id: 8,
+        title: "Toast Messages",
+        description: "Display different types of Toast messages with custom duration and position.",
+        xml: `<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Long Toast" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Short Toast" />
+
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Custom Position Toast" />
+
+</LinearLayout>`,
+        java: `package com.example.lab08;
+
+import android.os.Bundle;
+import android.view.Gravity;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        findViewById(R.id.btn1).setOnClickListener(v ->
+                Toast.makeText(this,
+                        "I am Long Toast appears at default position",
+                        Toast.LENGTH_LONG).show()
+        );
+
+        findViewById(R.id.btn2).setOnClickListener(v ->
+                Toast.makeText(this,
+                        "I am Short Toast, I will stay for 2 sec",
+                        Toast.LENGTH_SHORT).show()
+        );
+
+        findViewById(R.id.btn3).setOnClickListener(v -> {
+            Toast t = Toast.makeText(this,
+                    "I am Short Toast appears at margin 50,50",
+                    Toast.LENGTH_SHORT);
+            t.setGravity(Gravity.TOP, 50, 50);
+            t.show();
+        });
+    }
+}`
+    },
+    {
+        id: 9,
+        title: "Options Menu & Context Menu",
+        description: "Implement simple Options Menu and Context Menu (Long Press).",
+        xml: `<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textView"
+    android:text="Long Press Me"
+    android:textSize="22sp"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />`,
+        java: `package com.example.lab09;
+
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView tv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        tv = findViewById(R.id.textView);
+        registerForContextMenu(tv);
+    }
+
+    // Options Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Maths");
+        menu.add("Java");
+        menu.add("Android");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Toast.makeText(this,
+                item.getTitle(),
+                Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    // Context Menu
+    @Override
+    public void onCreateContextMenu(ContextMenu menu,
+                                    View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add("Semester 1");
+        menu.add("Semester 2");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        Toast.makeText(this,
+                item.getTitle(),
+                Toast.LENGTH_SHORT).show();
+        return true;
+    }
+}`
+    },
+    {
+        id: 10,
+        title: "SQLite Student Database",
+        description: "Accept and store student data in a local SQLite database.",
+        xml: `<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Student Name" />
+
+    <EditText
+        android:id="@+id/age"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Age"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save" />
+
+</LinearLayout>`,
+        java: `package com.example.lab10;
+
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    SQLiteDatabase db;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        EditText name = findViewById(R.id.name);
+        EditText age = findViewById(R.id.age);
+        Button save = findViewById(R.id.saveBtn);
+
+        db = openOrCreateDatabase("StudentDB",
+                MODE_PRIVATE, null);
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS student(name TEXT, age INTEGER)");
+
+        save.setOnClickListener(v -> {
+            String n = name.getText().toString();
+            String a = age.getText().toString();
+
+            db.execSQL("INSERT INTO student VALUES('" + n + "'," + a + ")");
+            Toast.makeText(this,
+                    "Saved Successfully",
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 }`
     }
