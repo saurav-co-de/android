@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import CodeBlock from './CodeBlock';
 import PhonePreview from './PhonePreview';
 import IntroVideo from './IntroVideo';
@@ -6,11 +6,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Terminal, Loader2 } from 'lucide-react';
 import sukonaVideo from '../assets/sukona.mp4';
 import program1Video from '../assets/program1.mp4';
+import program2Video from '../assets/program2.mp4';
+import program3Video from '../assets/program3.mp4';
+import program4Video from '../assets/program4.mp4';
+import program5Video from '../assets/program5.mp4';
+import program6Video from '../assets/program6.mp4';
 
 const ProgramContent = ({ program }) => {
     const [viewState, setViewState] = useState('loading'); // 'loading' | 'video' | 'content'
 
-    const videoSrc = program?.id === 1 ? program1Video : sukonaVideo;
+    const videoSrc = useMemo(() => {
+        switch (program?.id) {
+            case 1: return program1Video;
+            case 2: return program2Video;
+            case 3: return program3Video;
+            case 4: return program4Video;
+            case 5: return program5Video;
+            case 6: return program6Video;
+            default: return sukonaVideo;
+        }
+    }, [program?.id]);
 
     useEffect(() => {
         if (program) {
