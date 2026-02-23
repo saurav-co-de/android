@@ -5,9 +5,12 @@ import IntroVideo from './IntroVideo';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Terminal, Loader2 } from 'lucide-react';
 import sukonaVideo from '../assets/sukona.mp4';
+import program1Video from '../assets/program1.mp4';
 
 const ProgramContent = ({ program }) => {
     const [viewState, setViewState] = useState('loading'); // 'loading' | 'video' | 'content'
+
+    const videoSrc = program?.id === 1 ? program1Video : sukonaVideo;
 
     useEffect(() => {
         if (program) {
@@ -62,7 +65,7 @@ const ProgramContent = ({ program }) => {
                             <p className="text-gray-500 text-sm">Review the program overview before accessing the code.</p>
                         </div>
                         <IntroVideo
-                            src={sukonaVideo}
+                            src={videoSrc}
                             onVideoEnd={() => setViewState('content')}
                         />
                     </motion.div>
