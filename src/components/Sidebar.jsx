@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const Sidebar = ({ programs, activeId, setActiveId, searchQuery, setSearchQuery, isOpen, setIsOpen }) => {
     return (
@@ -21,9 +22,14 @@ const Sidebar = ({ programs, activeId, setActiveId, searchQuery, setSearchQuery,
 
                 <nav className="flex-1 overflow-y-auto px-4 pb-4 space-y-1">
                     {programs.length > 0 ? (
-                        programs.map((program) => (
-                            <button
+                        programs.map((program, index) => (
+                            <motion.button
                                 key={program.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => {
                                     setActiveId(program.id);
                                     setIsOpen(false);
@@ -40,7 +46,7 @@ const Sidebar = ({ programs, activeId, setActiveId, searchQuery, setSearchQuery,
                                     {program.id}
                                 </span>
                                 <span className="leading-tight">{program.title}</span>
-                            </button>
+                            </motion.button>
                         ))
                     ) : (
                         <div className="p-4 text-center text-gray-500 text-sm italic">

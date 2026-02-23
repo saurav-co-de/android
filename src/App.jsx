@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import ProgramContent from './components/ProgramContent';
 import { Toaster } from 'react-hot-toast';
 import sukonaVideo from './assets/sukona.mp4';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const [activeId, setActiveId] = useState(1);
@@ -82,7 +83,17 @@ function App() {
         />
 
         <div className="flex-1 overflow-y-auto">
-          <ProgramContent program={activeProgram} />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeId}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ProgramContent program={activeProgram} />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 
 const Navbar = ({ darkMode, setDarkMode, toggleSidebar, sidebarOpen }) => {
@@ -18,18 +19,23 @@ const Navbar = ({ darkMode, setDarkMode, toggleSidebar, sidebarOpen }) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.1, rotate: 180 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => setDarkMode(!darkMode)}
                         className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:scale-105 transition-all shadow-sm"
                         aria-label="Toggle Theme"
                     >
                         {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
+                    </motion.button>
                     <div className="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2"></div>
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                        <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-indigo-500/30"
+                        >
                             AL
-                        </div>
+                        </motion.div>
                         <span className="hidden sm:block text-sm font-semibold">User</span>
                     </div>
                 </div>
