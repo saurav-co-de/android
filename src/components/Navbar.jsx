@@ -1,43 +1,50 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, User } from 'lucide-react';
+import { useTheme } from '../theme/ThemeContext';
 
-const Navbar = ({ darkMode, setDarkMode, toggleSidebar, sidebarOpen }) => {
+const Navbar = ({ toggleSidebar, sidebarOpen }) => {
+    const { theme, toggleTheme } = useTheme();
+    const isDark = theme === 'dark';
+
     return (
-        <header className="sticky top-0 z-30 w-full bg-white/60 dark:bg-gray-900/60 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-700/50">
+        <header className="sticky top-0 z-30 w-full glass-effect">
             <div className="px-4 lg:px-8 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={toggleSidebar}
-                        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        className="lg:hidden p-2.5 rounded-xl hover:bg-[var(--bg-card)] transition-colors text-[var(--text-primary)]"
                     >
-                        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                        {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
                     </button>
-                    <div className="hidden lg:block">
-                        {/* Empty space for sidebar alignment or breadcrumbs */}
+                    <div className="hidden lg:flex items-center gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-2 py-1 rounded-md">
+                            Workspace
+                        </span>
+                        <div className="h-4 w-[1px] bg-[var(--border-subtle)]" />
+                        <span className="text-xs font-bold text-[var(--text-secondary)]">Main Branch</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <motion.button
-                        whileHover={{ scale: 1.1, rotate: 180 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setDarkMode(!darkMode)}
-                        className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:scale-105 transition-all shadow-sm"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={toggleTheme}
+                        className="p-2.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)]/50 transition-all shadow-sm"
                         aria-label="Toggle Theme"
                     >
-                        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
                     </motion.button>
-                    <div className="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-2"></div>
-                    <div className="flex items-center gap-2">
-                        <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-indigo-500/30"
-                        >
-                            AL
-                        </motion.div>
-                        <span className="hidden sm:block text-sm font-semibold">User</span>
-                    </div>
+
+                    <div className="h-8 w-[1px] bg-[var(--border-subtle)] mx-1"></div>
+
+                    <button className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-2xl hover:bg-[var(--bg-card)] transition-all group">
+                        <span className="hidden sm:block text-xs font-black text-[var(--text-primary)]">GOJO</span>
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white ring-2 ring-white/10 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                            <User size={16} />
+                        </div>
+                    </button>
                 </div>
             </div>
         </header>

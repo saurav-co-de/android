@@ -589,70 +589,65 @@ public class MainActivity extends AppCompatActivity {
     {
         id: 9,
         title: "Options Menu & Context Menu",
-        description: "Implement simple Options Menu and Context Menu (Long Press).",
+        description: "Implement Options Menu and Context Menu (Long Press) to display menu items.",
         xml: `<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/textView"
-    android:text="Long Press Me"
-    android:textSize="22sp"
-    android:gravity="center"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />`,
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtLongPress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Long Press for Sem 2 Subjects"
+        android:padding="20dp"
+        android:textSize="18sp"
+        android:background="#EEEEEE"/>
+</LinearLayout>`,
         java: `package com.example.lab09;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.*;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-
-    TextView tv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv = findViewById(R.id.textView);
-        registerForContextMenu(tv);
+        // Connect the TextView to the Context Menu system
+        registerForContextMenu(findViewById(R.id.txtLongPress));
     }
 
-    // Options Menu
+    // 1. OPTIONS MENU (Semester 1 - Click 3 Dots)
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add("Maths");
-        menu.add("Java");
-        menu.add("Android");
+    public boolean onCreateOptionsMenu(Menu m) {
+        m.add("Sem 1: Mathematics");
+        m.add("Sem 1: Physics");
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Toast.makeText(this,
-                item.getTitle(),
-                Toast.LENGTH_SHORT).show();
+    public boolean onOptionsItemSelected(MenuItem i) {
+        Toast.makeText(this, "Selected: " + i.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
     }
 
-    // Context Menu
+    // 2. CONTEXT MENU (Semester 2 - Long Press Text)
     @Override
-    public void onCreateContextMenu(ContextMenu menu,
-                                    View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add("Semester 1");
-        menu.add("Semester 2");
+    public void onCreateContextMenu(ContextMenu m, View v, ContextMenu.ContextMenuInfo info) {
+        m.setHeaderTitle("Semester 2 Subjects");
+        m.add("Sem 2: Mobile App Development");
+        m.add("Sem 2: Operating Systems");
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        Toast.makeText(this,
-                item.getTitle(),
-                Toast.LENGTH_SHORT).show();
+    public boolean onContextItemSelected(MenuItem i) {
+        Toast.makeText(this, "Selected: " + i.getTitle(), Toast.LENGTH_SHORT).show();
         return true;
     }
 }`
@@ -660,69 +655,85 @@ public class MainActivity extends AppCompatActivity {
     {
         id: 10,
         title: "SQLite Student Database",
-        description: "Accept and store student data in a local SQLite database.",
+        description: "To implement a Student Database using SQLite for saving Name and Age.",
         xml: `<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="20dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/editID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Student Name" />
+        android:hint="Enter Student ID" />
 
     <EditText
-        android:id="@+id/age"
+        android:id="@+id/editName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Age"
-        android:inputType="number" />
+        android:hint="Enter Student Name" />
 
     <Button
-        android:id="@+id/saveBtn"
+        android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save" />
-
+        android:text="Add Student"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" />
 </LinearLayout>`,
-        java: `package com.example.lab10;
+        java: `// Part 1: DatabaseHelper.java
+package com.example.lab10;
 
+import android.content.Context;
+import android.database.sqlite.*;
+
+class DatabaseHelper extends SQLiteOpenHelper {
+    public DatabaseHelper(Context c) { super(c, "StudentDB", null, 1); }
+
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE students(id TEXT, name TEXT)");
+    }
+
+    public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
+        db.execSQL("DROP TABLE IF EXISTS students");
+        onCreate(db);
+    }
+}
+
+// Part 2: MainActivity.java
+package com.example.lab10;
+
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-
-    SQLiteDatabase db;
+    DatabaseHelper dbHelper;
+    EditText editID, editName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText name = findViewById(R.id.name);
-        EditText age = findViewById(R.id.age);
-        Button save = findViewById(R.id.saveBtn);
+        dbHelper = new DatabaseHelper(this);
+        editID = findViewById(R.id.editID);
+        editName = findViewById(R.id.editName);
+        Button btnAdd = findViewById(R.id.btnAdd);
 
-        db = openOrCreateDatabase("StudentDB",
-                MODE_PRIVATE, null);
+        btnAdd.setOnClickListener(v -> {
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put("id", editID.getText().toString());
+            cv.put("name", editName.getText().toString());
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS student(name TEXT, age INTEGER)");
-
-        save.setOnClickListener(v -> {
-            String n = name.getText().toString();
-            String a = age.getText().toString();
-
-            db.execSQL("INSERT INTO student VALUES('" + n + "'," + a + ")");
-            Toast.makeText(this,
-                    "Saved Successfully",
-                    Toast.LENGTH_SHORT).show();
+            long res = db.insert("students", null, cv);
+            if (res != -1) Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
         });
     }
 }`

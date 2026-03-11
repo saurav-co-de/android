@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { programs } from './data/programs';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -6,28 +6,13 @@ import ProgramContent from './components/ProgramContent';
 import { Toaster } from 'react-hot-toast';
 import sukonaVideo from './assets/sukona.mp4';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeProvider, useTheme } from './theme/ThemeContext';
 
-function App() {
+function AppContent() {
+  const { theme } = useTheme();
   const [activeId, setActiveId] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark' ||
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    }
-    return false;
-  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [darkMode]);
 
   const filteredPrograms = useMemo(() => {
     return programs.filter(p =>
@@ -39,27 +24,33 @@ function App() {
   const activeProgram = programs.find(p => p.id === activeId);
 
   return (
-    <div className="min-h-screen bg-gray-50/10 dark:bg-gray-900/10 text-gray-900 dark:text-gray-100 transition-colors duration-300 relative overflow-hidden">
-      {/* Background Video */}
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500 relative overflow-hidden">
+      {/* Background Video with Premium Multi-layer Blending */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="fixed top-0 left-0 w-full h-full object-cover -z-10 opacity-40 dark:opacity-20 transition-opacity duration-500"
+        className="fixed top-0 left-0 w-full h-full object-cover -z-20 opacity-50 dark:opacity-30 transition-opacity duration-1000"
       >
         <source src={sukonaVideo} type="video/mp4" />
       </video>
 
-      {/* Content Overlay */}
-      <div className="fixed inset-0 bg-white/20 dark:bg-gray-900/40 backdrop-blur-[2px] -z-10"></div>
+      {/* Premium Gradient Overlay for Depth */}
+      <div className="fixed inset-0 bg-gradient-to-br from-white/40 via-transparent to-white/40 dark:from-black/60 dark:via-transparent dark:to-black/60 -z-10 pointer-events-none" />
+
+      {/* Interactive Surface Blur */}
+      <div className="fixed inset-0 bg-white/10 dark:bg-slate-950/40 backdrop-blur-[4px] -z-10" />
 
       <Toaster position="bottom-right" />
 
       {/* Sidebar Overlay for Mobile */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden backdrop-blur-sm"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden backdrop-blur-md"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -76,8 +67,6 @@ function App() {
 
       <div className="lg:pl-72 flex flex-col min-h-screen relative z-10">
         <Navbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
           toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
         />
@@ -86,10 +75,10 @@ function App() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeId}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ type: "spring", stiffness: 100, damping: 20 }}
             >
               <ProgramContent program={activeProgram} />
             </motion.div>
@@ -97,6 +86,14 @@ function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
